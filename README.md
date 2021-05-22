@@ -2,6 +2,25 @@
 This Package contains a standalone model called PoseNet, as well as some demos, for running real-time pose estimation
 in the browser using TensorFlow.js.
 
+Currently, we provide 3 model options:
+
+#### MoveNet
+[Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=movenet)
+
+MoveNet is an ultra fast and accurate model that detects 17 keypoints of a body.
+It can run at 50+ fps on modern laptop and phones.
+
+#### BlazePose:
+[Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=blazepose)
+
+MediaPipe BlazePose can detect 33 keypoints, in addition to the 17 COCO keypoints,
+it provides additional keypoints for face, hands and feet.
+
+#### PoseNet
+[Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=posenet)
+
+PoseNet can detect multiple poses, each pose contains 17 keypoints.
+
 # Inroduction
 
 PoseNet can be used to estimate either a single pose or multiple poses, meaning there is a version of the algorithm
@@ -45,35 +64,50 @@ human body i.e Right Eye, Left Eye, Right wrist, Left Wrist etc.
 ### Output of PoseNet Model
 
 Since the PoseNet model will help us to find the Key points and we will get this output in X,Y coordinates so
-we will get total 34 coorinates form the PoseNet Model as output in 17 pairs with their probability laying between 0-1.
+we will get  as output in 17 detection points with their X,Y coordinates value and probability which lying between 0-1.
 
-Example output:
-```
-[
-  {
-    score: 0.8,
-    keypoints: [
-      {x: 230, y: 220, score: 0.9, name: "nose"},
-      {x: 212, y: 190, score: 0.8, name: "left_eye"},
-      ...
-    ]
-  }
-]
-```
+![image](https://user-images.githubusercontent.com/36468856/119215104-37b9c580-bae9-11eb-842a-9f37b8efaa87.png)
 
 
 
 ### Classifier
 
-Her we will use the ml5 classiffier and In this step our all coordinates that we have recieved from PoseNet Model will
-be fed to our classifier which will help us to identify the labeled pose from the classifier. 
+The output that we have recieved from PoseNet Model in 2D array will convert into 1D aaray and provide to ml5 classifier which will help us to identify the labeled pose from the classifier. 
+
+
+
+![image](https://user-images.githubusercontent.com/36468856/119215296-7a2fd200-baea-11eb-9a97-e0c825604ccd.png)
+
+
+
 
 #### Final Output
 
-Since our classifier will help us to classify the pose under 3 labels "1", "2", "3" which we fed as an output layer
+Since our classifier will help us to classify the pose under 3 labels "Namaste", "Salute", "Hi 5" which we fed as an output layer
 So as a final output our model will tell us which pose is this. 
 
 -----------------------------------------------------------------------------------------------------
+
+Resources 
+-----------------------------------------------------------------------------------------------------
+We have used below resources to create our model
+
+## How Pose Detection Model Working
+
+https://www.youtube.com/watch?v=OIo-DIOkNVg&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=22
+
+## How to create a PoseNet Model
+
+https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=23
+
+## How PoseNet Model used as a Yoga Trainer
+
+https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=23
+
+## How Pose Estimation Using the PoseNet Model
+
+https://heartbeat.fritz.ai/human-pose-estimation-using-tensorflows-posenet-model-e5770f0a0a31
+
 
 
 
