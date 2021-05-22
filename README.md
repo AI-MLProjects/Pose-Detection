@@ -92,15 +92,15 @@ Resources
 -----------------------------------------------------------------------------------------------------
 We have used below resources to create our model
 
-## How Pose Detection Model Working
+## How Pose Estimation Model Working
 
 https://www.youtube.com/watch?v=OIo-DIOkNVg&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=22
 
-## How to create a PoseNet Model
+## How to create a Pose Estimation Model
 
 https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=23
 
-## How PoseNet Model used as a Yoga Trainer
+## How Pose Estimation Model used as a Yoga Trainer
 
 https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbeam3y&index=23
 
