@@ -72,7 +72,8 @@ we will get  as output in 17 detection points with their X,Y coordinates value a
 
 ### Classifier
 
-The output that we have recieved from PoseNet Model in 2D array will convert into 1D aaray and provide to ml5 classifier which will help us to identify the labeled pose from the classifier. 
+The output that we have recieved from PoseNet Model in 2D array will convert into 1D array, In our case our out of 17 2d Array will get convert into 34 1D array,
+and provide to ml5 classifier which will help us to identify the labeled pose from the classifier. 
 
 
 
