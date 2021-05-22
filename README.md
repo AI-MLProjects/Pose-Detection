@@ -2,7 +2,7 @@
 This Package contains a standalone model called PoseNet, as well as some demos, for running real-time pose estimation
 in the browser using TensorFlow.js.
 
-Currently, we provide 3 model options:
+Below are the 3 Pose Estimation Pre trained Model We can go in details by using below link In our model we will go with PoseNet Model: 
 
 #### MoveNet
 [Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=movenet)
