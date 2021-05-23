@@ -27,6 +27,8 @@ PoseNet can be used to estimate either a single pose or multiple poses, meaning 
 that can detect only one person in an image/video and one version that can detect multiple persons in an image/video. So far we
 will use the single person's Image/video to estimate the pose.
 
+See the project live at: [https://posedetectionmodel.netlify.app]
+
 ------------------------------------------------------------------------
 
 ## How it Works 
