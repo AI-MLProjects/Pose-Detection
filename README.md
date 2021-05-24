@@ -111,6 +111,9 @@ https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbea
 
 https://heartbeat.fritz.ai/human-pose-estimation-using-tensorflows-posenet-model-e5770f0a0a31
 
+## Live URL: 
+posedetectionmodel.netlify.app
+
 
 
 
