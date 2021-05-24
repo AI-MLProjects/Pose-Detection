@@ -21,11 +21,13 @@ it provides additional keypoints for face, hands and feet.
 
 PoseNet can detect multiple poses, each pose contains 17 keypoints.
 
-# Inroduction
+# Introduction
 
 PoseNet can be used to estimate either a single pose or multiple poses, meaning there is a version of the algorithm
 that can detect only one person in an image/video and one version that can detect multiple persons in an image/video. So far we
 will use the single person's Image/video to estimate the pose.
+
+See the project live at: [https://posedetectionmodel.netlify.app]
 
 ------------------------------------------------------------------------
 
