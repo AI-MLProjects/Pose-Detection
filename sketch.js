@@ -1,24 +1,72 @@
 let video, poseNet, pose, skeleton, brain, targetLabel
 i=0,
-state = 'waiting';
+state = 'waiting', poseLabel = "1";
+
+function whileTraining(epoch, loss) {
+  console.log(epoch);
+}
+
+function finishedTraining() {
+  console.log('finished training.');
+  state = 'prediction';
+}
 
 keyPressed = () => {
-  if(key == 's'){
-    brain.saveData();
-  } else {
-    targetLabel = key;
-    console.log(targetLabel);
-    setTimeout(() => {
-      console.log('collecting...');
-      state = 'collecting';
+  switch (key) {
+    case 't':
+      state = 'training';
+      console.log('starting training');
+      brain.loadData('123.json', dataReady);
+      // brain.normalizeData();
+      // let options = {
+      //   epochs: 10
+      // };
+      // brain.train(options, whileTraining, finishedTraining);
+      break;
+    case 's':
+      brain.saveData();
+      break;  
+    default:
+      targetLabel = key;
+      console.log(targetLabel);
       setTimeout(() => {
-        console.log('not collecting...');
-        state = 'waiting';
-      }, 10000);
-    }, 10000);
-    state = 'collecting';
+        console.log('collecting...');
+        state = 'collecting';
+        setTimeout(() => {
+          console.log('not collecting...');
+          state = 'waiting';
+        }, 5000);
+      }, 3000);
+      state = 'collecting';
+      break;
   }
 }
+
+gotResults = (errors, results) => {
+  poseLabel = results[0].label;
+  console.log(results[0].confidence);
+  classifyPose();
+}
+
+classifyPose = () => {
+  if(pose){
+    let inputs = [];
+    for(let i=0; i< pose.keypoints.length; i++){
+      let x = pose.keypoints[i].position.x;
+      let y = pose.keypoints[i].position.y;
+      inputs.push(x);
+      inputs.push(y);
+    }
+  } else{
+    setTimeout(classifyPose, 100);
+  }
+}
+
+brainLoaded =() =>{
+  console.log("Pose classification Ready");
+  classifyPose();
+}
+
 
 
 setup = () => {
@@ -32,12 +80,31 @@ setup = () => {
 
   let options = {
     input: 34,
-    output: 4,
+    output: 3,
     task: 'classification',
     debug: true
   }
 
   brain = ml5.neuralNetwork(options);
+  const modelInfo = {
+    model: 'model.json',
+    metadata: 'model_meta.json',
+    weights: 'model.weights.bin'
+  }
+  brain.load(modelInfo, brainLoaded);
+  // brain.loadData('123.json', dataReady);
+}
+
+
+
+dataReady = () => {
+  brain.normalizeData();
+  brain.train({epochs:200}, finished);
+}
+
+finished = () => {
+  console.log('model trained');
+  brain.save();
 }
 
 
@@ -57,8 +124,6 @@ gotPoses = (poses) => {
         brain.addData(inputs, target);
       }
     }
-    
-
     // console.log(i , ": poses : ", pose)
 }
 
@@ -67,6 +132,7 @@ modelLoaded = () =>{
 }
 
 draw = () =>{
+  push();
   // this is the code to mirror the image
   translate(video.width, 0);
   scale(-1, 1);
@@ -96,9 +162,15 @@ draw = () =>{
       stroke(255);
       line(a.position.x, a.position.y, b.position.x, b.position.y);
     }
-
-
   }
+
+  pop();
+  fill(255, 0, 255);
+  noStroke();
+  textSize(200);
+  textAlign(CENTER, CENTER);
+  text(poseLabel, width/2, height/2);
+
 }
 
 
