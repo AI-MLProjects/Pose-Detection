@@ -91,10 +91,6 @@ So as a final output our model will tell us which pose is this.
 
 -----------------------------------------------------------------------------------------------------
 
-#### Demo
-https://posedetectionmodel.netlify.app/
-
-
 Resources 
 -----------------------------------------------------------------------------------------------------
 We have used below resources to create our model
@@ -116,7 +112,7 @@ https://www.youtube.com/watch?v=FYgYyq-xqAw&list=PLRqwX-V7Uu6YPSwT06y_AEYTqIwbea
 https://heartbeat.fritz.ai/human-pose-estimation-using-tensorflows-posenet-model-e5770f0a0a31
 
 ## Live URL: 
-posedetectionmodel.netlify.app
+https://posedetectionmodel.netlify.app/
 
 
 
