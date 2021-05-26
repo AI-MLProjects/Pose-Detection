@@ -91,6 +91,10 @@ So as a final output our model will tell us which pose is this.
 
 -----------------------------------------------------------------------------------------------------
 
+#### Demo
+https://posedetectionmodel.netlify.app/
+
+
 Resources 
 -----------------------------------------------------------------------------------------------------
 We have used below resources to create our model

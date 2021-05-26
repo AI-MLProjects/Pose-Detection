@@ -1,197 +1,115 @@
-let video, poseNet, pose, skeleton, brain, targetLabel
-i=0,
-state = 'waiting', poseLabel = "1";
-
-function whileTraining(epoch, loss) {
-  console.log(epoch);
-}
-
-function finishedTraining() {
-  console.log('finished training.');
-  state = 'prediction';
-}
-
-keyPressed = () => {
-  switch (key) {
-    case 't':
-      state = 'training';
-      console.log('starting training');
-      brain.loadData('123.json', dataReady);
-      // brain.normalizeData();
-      // let options = {
-      //   epochs: 10
-      // };
-      // brain.train(options, whileTraining, finishedTraining);
-      break;
-    case 's':
-      brain.saveData();
-      break;  
-    default:
-      targetLabel = key;
-      console.log(targetLabel);
-      setTimeout(() => {
-        console.log('collecting...');
-        state = 'collecting';
-        setTimeout(() => {
-          console.log('not collecting...');
-          state = 'waiting';
-        }, 5000);
-      }, 3000);
-      state = 'collecting';
-      break;
-  }
-}
-
-gotResults = (errors, results) => {
-  poseLabel = results[0].label;
-  console.log(results[0].confidence);
-  classifyPose();
-}
-
-classifyPose = () => {
-  if(pose){
-    let inputs = [];
-    for(let i=0; i< pose.keypoints.length; i++){
-      let x = pose.keypoints[i].position.x;
-      let y = pose.keypoints[i].position.y;
-      inputs.push(x);
-      inputs.push(y);
-    }
-  } else{
-    setTimeout(classifyPose, 100);
-  }
-}
-
-brainLoaded =() =>{
-  console.log("Pose classification Ready");
-  classifyPose();
-}
-
-
-
-setup = () => {
-  createCanvas(640, 480);
-  video = createCapture(VIDEO);
-  video.hide();
-  poseNet = ml5.poseNet(video, modelLoaded)
-
-  // on pose event of poseNet
-  poseNet.on('pose', gotPoses);
-
-  let options = {
-    input: 34,
-    output: 3,
-    task: 'classification',
-    debug: true
-  }
-
-  brain = ml5.neuralNetwork(options);
-  const modelInfo = {
-    model: 'model.json',
-    metadata: 'model_meta.json',
-    weights: 'model.weights.bin'
-  }
-  brain.load(modelInfo, brainLoaded);
-  // brain.loadData('123.json', dataReady);
-}
-
-
-
-dataReady = () => {
-  brain.normalizeData();
-  brain.train({epochs:200}, finished);
-}
-
-finished = () => {
-  console.log('model trained');
-  brain.save();
-}
-
-
-gotPoses = (poses) => {
-    if(poses.length){
-      pose = poses[0].pose
-      skeleton = poses[0].skeleton;
-      if(state == 'collecting'){
-        let inputs = [];
-        for(let i=0; i< pose.keypoints.length; i++){
-          let x = pose.keypoints[i].position.x;
-          let y = pose.keypoints[i].position.y;
-          inputs.push(x);
-          inputs.push(y);
-        }
-        let target = [targetLabel]
-        brain.addData(inputs, target);
-      }
-    }
-    // console.log(i , ": poses : ", pose)
-}
-
-modelLoaded = () =>{
-  console.log("poseNet is ready")
-}
-
-draw = () =>{
-  push();
-  // this is the code to mirror the image
-  translate(video.width, 0);
-  scale(-1, 1);
-  image(video, 0, 0, video.width, video.height);
-
-
-  if(pose){// if pose is available then this code will execute
-    let eyeR = pose.rightEye,
-    eyeL = pose.leftEye,
-    d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y)
-
-    fill(255,0,0)
-    ellipse(pose.nose.x, pose.nose.y, d);
-    ellipse(pose.rightWrist.x, pose.rightWrist.y, 30);
-    ellipse(pose.leftWrist.x, pose.leftWrist.y, 30);
-    for(let i=0; i< pose.keypoints.length; i++){
-      let x = pose.keypoints[i].position.x;
-      let y = pose.keypoints[i].position.y;
-      fill(0,255,0);
-      ellipse(x,y,10,10)
-    }
-
-    for(let i=0; i< skeleton.length; i++){
-      let a = skeleton[i][0];
-      let b = skeleton[i][1];
-      strokeWeight(2);
-      stroke(255);
-      line(a.position.x, a.position.y, b.position.x, b.position.y);
-    }
-  }
-
-  pop();
-  fill(255, 0, 255);
-  noStroke();
-  textSize(200);
-  textAlign(CENTER, CENTER);
-  text(poseLabel, width/2, height/2);
-
-}
-
-
-// ml5.js: Pose Estimation with PoseNet
-// The Coding Train / Daniel Shiffman
-// https://thecodingtrain.com/learning/ml5/7.1-posenet.html
-// https://youtu.be/OIo-DIOkNVg
-// https://editor.p5js.org/codingtrain/sketches/ULA97pJXR
-/*
-
 let video;
 let poseNet;
 let pose;
 let skeleton;
 
+let brain;
+let state = 'waiting';
+let targetLabel;
+let poseLabel = '';
+const poseEnum = {'1': 'Namaskar', '2': 'Salute'};
+
+function keyPressed() {
+  if(key.length > 1) {
+    return;
+  }
+  console.log(key);
+  if(key === 's') { // Save Data
+    brain.saveData('posedata');
+  } if (key === 't') { // Load dataset, Train model and Save Model
+    brain.loadData('posedata.json', dataReady);
+  } if(key === 'l') { // Load Saved Model Model
+    loadBrain();
+  } else {
+    updateAddDataState(key);
+  }
+}
+function loadBrain() {
+  const modelInfo = {
+    model: 'model/model.json',
+    metadata: 'model/model_meta.json',
+    weights: 'model/model.weights.bin'
+  };
+  brain.load(modelInfo, brainLoaded);
+}
+function brainLoaded() {
+  console.log(brainLoaded);
+  classifyPose();
+}
+function classifyPose() {
+  if(pose) {
+    const inputs = [];
+    for (let i = 0; i < pose.keypoints.length; i++) {
+      const x = pose.keypoints[i].position.x;
+      const y = pose.keypoints[i].position.y;
+      inputs.push(x);
+      inputs.push(y);
+    }
+    brain.classify(inputs, gotResult);
+  } else {
+    setTimeout(() => {
+      classifyPose();
+    }, 100)
+  }
+}
+
+function gotResult(error, results) {
+  if(error) {
+
+  }
+  if(results) {
+    const confidence = results[0].confidence;
+    if(confidence > 0.70) {
+      poseLabel = poseEnum[results[0].label];
+      console.log(`Label: ${results[0].label}, Confidence : ${confidence}`);
+    }
+  }
+  classifyPose();
+}
+
+function dataReady() {
+  brain.normalizeData();
+  brain.train({epochs: 50}, finished);
+}
+
+function finished() {
+  console.log('Model trained');
+  brain.save();
+}
+
+function updateAddDataState(key) {
+  targetLabel = key;
+  console.log(`targetLabel : ${targetLabel}`);
+  setTimeout(() => {
+    state = 'collecting';
+    console.log(`state : ${state}`);
+    setTimeout(() => {
+      state = 'waiting';
+      console.log(`state : ${state}`);
+    }, 20000)
+  }, 3000)
+}
+
 function setup() {
-  createCanvas(640, 480);
+  const width = 640;
+  const height = 450;
+  createCanvas(width, 360);
   video = createCapture(VIDEO);
+  video.size(width, height)
   video.hide();
   poseNet = ml5.poseNet(video, modelLoaded);
   poseNet.on('pose', gotPoses);
+
+  initBrain();
+}
+function initBrain() {
+  const options = {
+    inputs: 34,
+    outputs: 2,
+    task: 'classification',
+    debug: true
+  };
+  brain = ml5.neuralNetwork(options);
 }
 
 function gotPoses(poses) {
@@ -199,6 +117,21 @@ function gotPoses(poses) {
   if (poses.length > 0) {
     pose = poses[0].pose;
     skeleton = poses[0].skeleton;
+    addData();
+  }
+}
+
+function addData() {
+  if(state === 'collecting') {
+    const inputs = [];
+    for (let i = 0; i < pose.keypoints.length; i++) {
+      const x = pose.keypoints[i].position.x;
+      const y = pose.keypoints[i].position.y;
+      inputs.push(x);
+      inputs.push(y);
+    }
+    const target = [targetLabel];
+    brain.addData(inputs, target);
   }
 }
 
@@ -210,30 +143,46 @@ function draw() {
   image(video, 0, 0);
 
   if (pose) {
-    let eyeR = pose.rightEye;
-    let eyeL = pose.leftEye;
-    let d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
-    fill(255, 0, 0);
-    ellipse(pose.nose.x, pose.nose.y, d);
-    fill(0, 0, 255);
-    ellipse(pose.rightWrist.x, pose.rightWrist.y, 32);
-    ellipse(pose.leftWrist.x, pose.leftWrist.y, 32);
-
-    for (let i = 0; i < pose.keypoints.length; i++) {
-      let x = pose.keypoints[i].position.x;
-      let y = pose.keypoints[i].position.y;
-      fill(0, 255, 0);
-      ellipse(x, y, 16, 16);
-    }
-
-    for (let i = 0; i < skeleton.length; i++) {
-      let a = skeleton[i][0];
-      let b = skeleton[i][1];
-      strokeWeight(2);
-      stroke(255);
-      line(a.position.x, a.position.y, b.position.x, b.position.y);
-    }
+    drawNose();
+    drawPose();
+    drawSkelton();
+    drawPoseLabel();
+    drawPoseLabel();
   }
 }
 
-*/
+function drawNose() {
+  const eyeL = pose.leftEye;
+  const eyeR = pose.rightEye;
+  const nose = pose.nose;
+  const d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+  fill(255,0,0);
+  ellipse(nose.x, nose.y, d);
+}
+
+function drawPose() {
+  for (let i = 0; i < pose.keypoints.length; i++) {
+    let x = pose.keypoints[i].position.x;
+    let y = pose.keypoints[i].position.y;
+    fill(0, 255, 0);
+    ellipse(x, y, 16, 16);
+  }
+}
+
+function drawSkelton() {
+  for (let i = 0; i < skeleton.length; i++) {
+    let a = skeleton[i][0];
+    let b = skeleton[i][1];
+    strokeWeight(2);
+    stroke(255);
+    line(a.position.x, a.position.y, b.position.x, b.position.y);
+  }
+}
+
+function drawPoseLabel() {
+  fill(255, 255,0);
+  noStroke();
+  textSize(100);
+  textAlign(CENTER, CENTER);
+  text(poseLabel, width/2, height-50);
+}
