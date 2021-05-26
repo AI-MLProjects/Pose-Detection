@@ -14,11 +14,11 @@ function keyPressed() {
     return;
   }
   console.log(key);
-  if(key === 's') { // Save Data
+  if(key === 's' || key === 'S') { // Save Data
     brain.saveData('posedata');
-  } if (key === 't') { // Load dataset, Train model and Save Model
+  } if (key === 't' || key === 'T') { // Load dataset, Train model and Save Model
     brain.loadData('posedata.json', dataReady);
-  } if(key === 'l') { // Load Saved Model Model
+  } if(key === 'l' || key === 'L') { // Load Saved Model Model
     loadBrain();
   } else {
     updateAddDataState(key);
@@ -33,7 +33,7 @@ function loadBrain() {
   brain.load(modelInfo, brainLoaded);
 }
 function brainLoaded() {
-  console.log(brainLoaded);
+  console.log('Brain Loaded');
   classifyPose();
 }
 function classifyPose() {
@@ -59,9 +59,9 @@ function gotResult(error, results) {
   }
   if(results) {
     const confidence = results[0].confidence;
-    if(confidence > 0.70) {
+    if(confidence > 0.85) {
       poseLabel = poseEnum[results[0].label];
-      console.log(`Label: ${results[0].label}, Confidence : ${confidence}`);
+      // console.log(`Label: ${results[0].label}, Confidence : ${confidence}`);
     }
   }
   classifyPose();
@@ -99,8 +99,6 @@ function setup() {
   video.hide();
   poseNet = ml5.poseNet(video, modelLoaded);
   poseNet.on('pose', gotPoses);
-
-  initBrain();
 }
 function initBrain() {
   const options = {
@@ -110,6 +108,7 @@ function initBrain() {
     debug: true
   };
   brain = ml5.neuralNetwork(options);
+  loadBrain();
 }
 
 function gotPoses(poses) {
@@ -137,16 +136,16 @@ function addData() {
 
 function modelLoaded() {
   console.log('poseNet ready');
+  initBrain();
 }
 
 function draw() {
   image(video, 0, 0);
 
   if (pose) {
-    drawNose();
-    drawPose();
-    drawSkelton();
-    drawPoseLabel();
+    // drawNose();
+    // drawPose();
+    // drawSkelton();
     drawPoseLabel();
   }
 }
