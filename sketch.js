@@ -2,29 +2,15 @@ let video, poseNet, pose, skeleton, brain, targetLabel
 i=0,
 state = 'waiting', poseLabel = "1";
 
-function whileTraining(epoch, loss) {
-  console.log(epoch);
-}
-
-function finishedTraining() {
-  console.log('finished training.');
-  state = 'prediction';
-}
-
 keyPressed = () => {
   switch (key) {
     case 't':
       state = 'training';
       console.log('starting training');
       brain.loadData('123.json', dataReady);
-      // brain.normalizeData();
-      // let options = {
-      //   epochs: 10
-      // };
-      // brain.train(options, whileTraining, finishedTraining);
       break;
     case 's':
-      brain.saveData();
+      brain.saveData('123');
       break;  
     default:
       targetLabel = key;
@@ -82,7 +68,8 @@ setup = () => {
     input: 34,
     output: 3,
     task: 'classification',
-    debug: true
+    debug: true,
+    learningRate: 0.5
   }
 
   brain = ml5.neuralNetwork(options);
