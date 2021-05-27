@@ -5,9 +5,10 @@ let skeleton;
 
 let brain;
 let state = 'waiting';
+let debugState = true;
 let targetLabel;
 let poseLabel = '';
-const poseEnum = {'1': 'Namaskar', '2': 'Salute'};
+const poseEnum = {'1': 'Namaskar', '2': 'Salute', '3': 'Tree', '4': 'Flying'};
 
 function keyPressed() {
   if(key.length > 1) {
@@ -24,6 +25,15 @@ function keyPressed() {
     updateAddDataState(key);
   }
 }
+
+function updateDebugState() {
+  console.log('updateDebugState is called ----- ')
+  setTimeout(() => {
+    debugState = false;
+    console.log('updateDebugState is called ----- ', debugState)
+  }, 4000)
+}
+
 function loadBrain() {
   const modelInfo = {
     model: 'model/model.json',
@@ -31,6 +41,7 @@ function loadBrain() {
     weights: 'model/model.weights.bin'
   };
   brain.load(modelInfo, brainLoaded);
+  updateDebugState();
 }
 function brainLoaded() {
   console.log('Brain Loaded');
@@ -57,9 +68,10 @@ function gotResult(error, results) {
   if(error) {
 
   }
+  customLog(`results -- ${JSON.stringify(results)}`);
   if(results) {
     const confidence = results[0].confidence;
-    if(confidence > 0.85) {
+    if(confidence > 0.80) {
       poseLabel = poseEnum[results[0].label];
       // console.log(`Label: ${results[0].label}, Confidence : ${confidence}`);
     }
@@ -103,7 +115,7 @@ function setup() {
 function initBrain() {
   const options = {
     inputs: 34,
-    outputs: 2,
+    outputs: 4,
     task: 'classification',
     debug: true
   };
@@ -184,4 +196,9 @@ function drawPoseLabel() {
   textSize(100);
   textAlign(CENTER, CENTER);
   text(poseLabel, width/2, height-50);
+}
+function customLog(message) {
+  if(debugState) {
+    console.log(message);
+  }
 }
