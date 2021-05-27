@@ -65,8 +65,8 @@ setup = () => {
   poseNet.on('pose', gotPoses);
 
   let options = {
-    input: 34,
-    output: 3,
+    inputs: 34,
+    outputs: 2,
     task: 'classification',
     debug: true,
     learningRate: 0.5
