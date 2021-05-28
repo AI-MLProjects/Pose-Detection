@@ -1,6 +1,14 @@
-# Pose Detection in the Browser: PoseNet Model
-This Package contains a standalone model called PoseNet, as well as some demos, for running real-time pose estimation
-in the browser using TensorFlow.js.
+# Real-time Human Pose Estimation in the Browser with ml5.js and p5.js
+In this project we can identify real time human pose, and we can identify how many times user did pushups, we can count how many seconds a person stands on a single foot. Try a live demo [here] (https://posedetectionmodel.netlify.app/)
+
+
+So What is Human pose estimation?
+Pose estimation refers to computer vision techniques that detect human figures in images and video, so that one could determine, for example, where someone’s elbow shows up in an image.
+To be clear, this technology is not recognizing who is in an image — there is no personal identifiable information associated to pose detection. The algorithm is simply estimating where key body joints are.
+![image](./docImages/pose_points.png)
+
+
+
 
 Below are the 3 Pose Estimation Pre trained Model We can go in details by using below link In our model we will go with PoseNet Model: 
 
