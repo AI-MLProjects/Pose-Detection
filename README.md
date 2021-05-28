@@ -1,5 +1,5 @@
 # Real-time Human Pose Estimation in the Browser with ml5.js and p5.js
-In this project we can identify real time human pose, and we can identify how many times user did pushups, we can count how many seconds a person stands on a single foot. Try a live demo [here] (https://posedetectionmodel.netlify.app/)
+In this project we can identify real time human pose, and we can identify how many times user did pushups, we can count how many seconds a person stands on a single foot. Try a live demo [here](https://posedetectionmodel.netlify.app/)
 
 
 So What is Human pose estimation?
