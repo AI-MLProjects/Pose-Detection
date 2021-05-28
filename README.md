@@ -77,21 +77,21 @@ So as a final output our model will tell us which pose is this.
 
 Technical
 -----------------------------------------------------------------------------------------------------
-PoseNet Model
-	Load posenet model
-	Got poses
-		draw poses and Skelton
-	Convert pose data into one dimensional array
-	Save data
+* PoseNet Model
+	* Load posenet model
+	* Got poses
+		* draw poses and Skelton
+	* Convert pose data into one dimensional array
+	* Save data
 
-Classifier Model
-	Load data
-	Normalize data
-	Create classifier model
-	Train model with normalise data
-	Save trained model
+* Classifier Model
+	* Load data
+	* Normalize data
+	* Create classifier model
+	* Train model with normalise data
+	* Save trained model
 
-Classify Pose
+* Classify Pose
 
 Resources 
 -----------------------------------------------------------------------------------------------------
