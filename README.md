@@ -93,6 +93,14 @@ Technical
 
 * Classify Pose
 
+Posenet Model Output
+-----------------------------------------------------------------------------------------------------
+![image](./docImages/posenet_output.png)
+
+Training Graph
+-----------------------------------------------------------------------------------------------------
+![image](./docImages/training.png)
+
 Resources 
 -----------------------------------------------------------------------------------------------------
 We have used below resources to create our model
