@@ -1,16 +1,19 @@
 let video, poseNet, pose, skeleton, brain, targetLabel
 i=0,
-state = 'waiting', poseLabel = "1";
+count = 0;
+state = 'waiting', 
+poseLabel = "0",
+move = '';
 
 keyPressed = () => {
   switch (key) {
     case 't':
       state = 'training';
       console.log('starting training');
-      brain.loadData('123.json', dataReady);
+      brain.loadData('up-down dataset/up-down.json', dataReady);
       break;
     case 's':
-      brain.saveData('123');
+      brain.saveData('up-down');
       break;  
     default:
       targetLabel = key;
@@ -21,17 +24,35 @@ keyPressed = () => {
         setTimeout(() => {
           console.log('not collecting...');
           state = 'waiting';
-        }, 5000);
-      }, 3000);
+        }, 10000);
+      }, 5000);
       state = 'collecting';
       break;
   }
 }
 
 gotResults = (errors, results) => {
-  poseLabel = results[0].label;
-  console.log(results[0].confidence);
-  classifyPose();
+  if(results){
+    // const confidence  = results[0].confidence
+    poseLabel = results[0].label;
+    // if(results[0].confidence > 0.75){
+      if(poseLabel == 1){
+        if(move == 'down'){
+          count += 1;
+        }
+        move = 'up';
+      } else{
+        move = 'down'
+      }
+      if(results[0].label == 2){
+      }
+      classifyPose();
+    // }
+    // console.log('label : ',results[0].label, " confidence : ", results[0].confidence);
+  }
+  if(errors){
+    console.log('error : ', errors)
+  }
 }
 
 classifyPose = () => {
@@ -43,7 +64,9 @@ classifyPose = () => {
       inputs.push(x);
       inputs.push(y);
     }
-  } else{
+    brain.classify(inputs, gotResults);
+  } 
+  else{
     setTimeout(classifyPose, 100);
   }
 }
@@ -65,18 +88,18 @@ setup = () => {
   poseNet.on('pose', gotPoses);
 
   let options = {
-    input: 34,
-    output: 3,
+    inputs: 34,
+    outputs: 2,
     task: 'classification',
     debug: true,
-    learningRate: 0.5
+    learningRate: 0.1
   }
 
   brain = ml5.neuralNetwork(options);
   const modelInfo = {
-    model: 'model.json',
-    metadata: 'model_meta.json',
-    weights: 'model.weights.bin'
+    model: 'up-down model/model.json',
+    metadata: 'up-down model/model_meta.json',
+    weights: 'up-down model/model.weights.bin'
   }
   brain.load(modelInfo, brainLoaded);
   // brain.loadData('123.json', dataReady);
@@ -131,32 +154,32 @@ draw = () =>{
     eyeL = pose.leftEye,
     d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y)
 
-    fill(255,0,0)
-    ellipse(pose.nose.x, pose.nose.y, d);
-    ellipse(pose.rightWrist.x, pose.rightWrist.y, 30);
-    ellipse(pose.leftWrist.x, pose.leftWrist.y, 30);
-    for(let i=0; i< pose.keypoints.length; i++){
-      let x = pose.keypoints[i].position.x;
-      let y = pose.keypoints[i].position.y;
-      fill(0,255,0);
-      ellipse(x,y,10,10)
-    }
+    // fill(255,0,0)
+    // ellipse(pose.nose.x, pose.nose.y, d);
+    // ellipse(pose.rightWrist.x, pose.rightWrist.y, 30);
+    // ellipse(pose.leftWrist.x, pose.leftWrist.y, 30);
+    // for(let i=0; i< pose.keypoints.length; i++){
+    //   let x = pose.keypoints[i].position.x;
+    //   let y = pose.keypoints[i].position.y;
+    //   // fill(0,255,0);
+    //   // ellipse(x,y,10,10)
+    // }
 
-    for(let i=0; i< skeleton.length; i++){
-      let a = skeleton[i][0];
-      let b = skeleton[i][1];
-      strokeWeight(2);
-      stroke(255);
-      line(a.position.x, a.position.y, b.position.x, b.position.y);
-    }
+    // for(let i=0; i< skeleton.length; i++){
+    //   let a = skeleton[i][0];
+    //   let b = skeleton[i][1];
+    //   strokeWeight(2);
+    //   stroke(255);
+    //   line(a.position.x, a.position.y, b.position.x, b.position.y);
+    // }
   }
 
   pop();
-  fill(255, 0, 255);
+  fill(255, 255, 0);
   noStroke();
-  textSize(200);
+  textSize(50);
   textAlign(CENTER, CENTER);
-  text(poseLabel, width/2, height/2);
+  text(((poseLabel== 1 ? 'up ' : 'down ')+ (" - count : " + count)), width/2, height/1.05);
 
 }
 
@@ -167,12 +190,10 @@ draw = () =>{
 // https://youtu.be/OIo-DIOkNVg
 // https://editor.p5js.org/codingtrain/sketches/ULA97pJXR
 /*
-
 let video;
 let poseNet;
 let pose;
 let skeleton;
-
 function setup() {
   createCanvas(640, 480);
   video = createCapture(VIDEO);
@@ -180,7 +201,6 @@ function setup() {
   poseNet = ml5.poseNet(video, modelLoaded);
   poseNet.on('pose', gotPoses);
 }
-
 function gotPoses(poses) {
   //console.log(poses);
   if (poses.length > 0) {
@@ -188,14 +208,11 @@ function gotPoses(poses) {
     skeleton = poses[0].skeleton;
   }
 }
-
 function modelLoaded() {
   console.log('poseNet ready');
 }
-
 function draw() {
   image(video, 0, 0);
-
   if (pose) {
     let eyeR = pose.rightEye;
     let eyeL = pose.leftEye;
@@ -205,14 +222,12 @@ function draw() {
     fill(0, 0, 255);
     ellipse(pose.rightWrist.x, pose.rightWrist.y, 32);
     ellipse(pose.leftWrist.x, pose.leftWrist.y, 32);
-
     for (let i = 0; i < pose.keypoints.length; i++) {
       let x = pose.keypoints[i].position.x;
       let y = pose.keypoints[i].position.y;
       fill(0, 255, 0);
       ellipse(x, y, 16, 16);
     }
-
     for (let i = 0; i < skeleton.length; i++) {
       let a = skeleton[i][0];
       let b = skeleton[i][1];
@@ -222,5 +237,4 @@ function draw() {
     }
   }
 }
-
 */
