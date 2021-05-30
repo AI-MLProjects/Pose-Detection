@@ -103,9 +103,9 @@ function updateAddDataState(key) {
 }
 
 function setup() {
-  const width = 640;
-  const height = 450;
-  createCanvas(width, 360);
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  createCanvas(width, window.innerHeight);
   video = createCapture(VIDEO);
   video.size(width, height)
   video.hide();
