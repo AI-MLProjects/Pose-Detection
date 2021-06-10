@@ -13,9 +13,10 @@ To be clear, this technology is not recognizing who is in an image — there is 
 Below are the 3 Pose Estimation Pre trained Model We can go in details by using below link In our model we will go with PoseNet Model: 
 
 #### MoveNet
-MoveNet is an ultra fast and accurate model that detects 17 keypoints of a body.
-It can run at 50+ fps on modern laptop and phones. [Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=movenet)
+[Demo](https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=movenet)
 
+MoveNet is an ultra fast and accurate model that detects 17 keypoints of a human body.
+It can run at 50+ fps on modern laptop and phones.
 
 #### BlazePose:
 MediaPipe BlazePose can detect 33 keypoints, in addition to the 17 COCO keypoints,
