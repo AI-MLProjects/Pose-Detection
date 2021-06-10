@@ -8,7 +8,8 @@ let state = 'waiting';
 let debugState = true;
 let targetLabel;
 let poseLabel = '';
-const poseEnum = {'1': 'Namaskar', '2': 'Salute', '3': 'Tree', '4': 'Flying'};
+let pushupCount = 0;
+const poseEnum = {'1': 'Up', '2': 'Down'};
 
 function keyPressed() {
   if(key.length > 1) {
@@ -18,7 +19,7 @@ function keyPressed() {
   if(key === 's' || key === 'S') { // Save Data
     brain.saveData('posedata');
   } if (key === 't' || key === 'T') { // Load dataset, Train model and Save Model
-    brain.loadData('posedata.json', dataReady);
+    brain.loadData('pushupCount/data.json', dataReady);
   } if(key === 'l' || key === 'L') { // Load Saved Model Model
     loadBrain();
   } else {
@@ -27,18 +28,19 @@ function keyPressed() {
 }
 
 function updateDebugState() {
-  console.log('updateDebugState is called ----- ')
+  console.log('updateDebugState is called ----- ');
+  debugState = true;
   setTimeout(() => {
     debugState = false;
     console.log('updateDebugState is called ----- ', debugState)
-  }, 4000)
+  }, 2000)
 }
 
 function loadBrain() {
   const modelInfo = {
-    model: 'model/model.json',
-    metadata: 'model/model_meta.json',
-    weights: 'model/model.weights.bin'
+    model: 'pushupCount/model/model.json',
+    metadata: 'pushupCount/model/model_meta.json',
+    weights: 'pushupCount/model/model.weights.bin'
   };
   brain.load(modelInfo, brainLoaded);
   updateDebugState();
@@ -72,11 +74,23 @@ function gotResult(error, results) {
   if(results) {
     const confidence = results[0].confidence;
     if(confidence > 0.80) {
-      poseLabel = poseEnum[results[0].label];
-      // console.log(`Label: ${results[0].label}, Confidence : ${confidence}`);
+        const label = poseEnum[results[0].label];
+      countPushup(label);
+    //   poseLabel = label;
+      // customLog(`Label: ${results[0].label}, Confidence : ${confidence}`);
     }
   }
   classifyPose();
+}
+
+function countPushup(label) {
+    if(!poseLabel) {
+        poseLabel = label;
+    }
+    if(poseLabel !== label) {
+        poseLabel = label;
+        pushupCount += 1;
+    }
 }
 
 function dataReady() {
@@ -103,9 +117,9 @@ function updateAddDataState(key) {
 }
 
 function setup() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  createCanvas(width, window.innerHeight);
+  const width = 640;
+  const height = 450;
+  createCanvas(width, 360);
   video = createCapture(VIDEO);
   video.size(width, height)
   video.hide();
@@ -115,7 +129,7 @@ function setup() {
 function initBrain() {
   const options = {
     inputs: 34,
-    outputs: 4,
+    outputs: 2,
     task: 'classification',
     debug: true
   };
@@ -195,7 +209,9 @@ function drawPoseLabel() {
   noStroke();
   textSize(100);
   textAlign(CENTER, CENTER);
-  text(poseLabel, width/2, height-50);
+  const labelData = poseLabel + pushupCount;
+//   text(poseLabel, width/2, height-50);
+  text(labelData, width/2, height-50);
 }
 function customLog(message) {
   if(debugState) {
